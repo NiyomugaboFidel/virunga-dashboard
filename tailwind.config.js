@@ -26,6 +26,12 @@ module.exports = {
                     light: '#ebe4f7',
                     'dark-light': 'rgb(128 93 202 / 15%)',
                 },
+                Red: {
+                    400: '#FF3A46',
+                    300: '#FF9DA3',
+                    200: '#FFCDDO',
+                    100: '#F55266',
+                  },
                 success: {
                     DEFAULT: '#00ab55',
                     light: '#ddf5f0',

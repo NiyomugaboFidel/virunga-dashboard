@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { ReactElement, ReactNode, Suspense } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import DefaultLayout from '../components/Layouts/DefaultLayout';
 import { Provider } from 'react-redux';
 import store from '../store/index';
@@ -10,9 +10,9 @@ import { ni18nConfig } from 'ni18n.config.ts';
 
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
-
 import '../styles/tailwind.css';
 import { NextPage } from 'next';
+import AuthProvider from '@/components/contexts/authContext';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
@@ -36,8 +36,11 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
                 <link rel="icon" href="/favicon.png" />
             </Head>
 
-            {getLayout(<Component {...pageProps} />)}
+            <AuthProvider>
+                {getLayout(<Component {...pageProps} />)}
+            </AuthProvider>
         </Provider>
     );
 };
+
 export default appWithI18Next(App, ni18nConfig);
