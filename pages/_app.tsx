@@ -28,7 +28,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
     return (
         <Provider store={store}>
             <Head>
-                <title>VRISTO - Multipurpose Tailwind Dashboard Template</title>
+                <title>VIRUNGA - Online - Shop</title>
                 <meta charSet="UTF-8" />
                 <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
