@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IRootState } from '../../store';
+import { AppDispatch, IRootState } from '../../store';
 import { toggleLocale, toggleTheme, toggleSidebar, toggleRTL } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
 import Dropdown from '../Dropdown';
@@ -32,9 +32,14 @@ import IconMenuDatatables from '@/components/Icon/Menu/IconMenuDatatables';
 import IconMenuForms from '@/components/Icon/Menu/IconMenuForms';
 import IconMenuPages from '@/components/Icon/Menu/IconMenuPages';
 import IconMenuMore from '@/components/Icon/Menu/IconMenuMore';
+import {logoutUser } from '@/store/slices/authSlice';
+import verifyToken from '../common/verifyToken';
+import { User } from '@/types/User';
 
 const Header = () => {
     const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
+    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -79,7 +84,7 @@ const Header = () => {
     useEffect(() => {
         setLocale(localStorage.getItem('i18nextLng') || themeConfig.locale);
     }, []);
-    const dispatch = useDispatch();
+   
 
     function createMarkup(messages: any) {
         return { __html: messages };
@@ -147,6 +152,27 @@ const Header = () => {
     const [search, setSearch] = useState(false);
 
     const { t, i18n } = useTranslation();
+
+  
+    const handlerLogout = async () => {
+       await dispatch(logoutUser());
+            router.push('/auth/boxed-signin')
+    };
+
+   
+   
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const payload = await verifyToken();
+            setLoggedInUser(payload as User);
+        };
+
+        fetchUser();
+    }, []);
+
+    // console.log('Logged in user:', loggedInUser);
+
 
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -408,24 +434,26 @@ const Header = () => {
                                 </ul>
                             </Dropdown>
                         </div>
+
+                         {/* logedin user and logout  */}
                         <div className="dropdown flex shrink-0">
                             <Dropdown
                                 offset={[0, 8]}
                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                 btnClassName="relative group block"
-                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src="/assets/images/user-profile.jpeg" alt="userProfile" />}
+                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />}
                             >
                                 <ul className="w-[230px] !py-0 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                                     <li>
                                         <div className="flex items-center px-4 py-4">
-                                            <img className="h-10 w-10 rounded-md object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
+                                            <img className="h-10 w-10 rounded-md object-cover" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />
                                             <div className="truncate ltr:pl-4 rtl:pr-4">
                                                 <h4 className="text-base">
-                                                    John Doe
+                                                    {loggedInUser? loggedInUser.firstName : ''}
                                                     <span className="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    johndoe@gmail.com
+                                                {loggedInUser? loggedInUser.email : ''}
                                                 </button>
                                             </div>
                                         </div>
@@ -449,10 +477,10 @@ const Header = () => {
                                         </Link>
                                     </li>
                                     <li className="border-t border-white-light dark:border-white-light/10">
-                                        <Link href="/auth/boxed-signin" className="!py-3 text-danger">
+                                        <button onClick={handlerLogout} className="!py-3 text-danger">
                                             <IconLogout className="h-4.5 w-4.5 shrink-0 rotate-90 ltr:mr-2 rtl:ml-2" />
                                             Sign Out
-                                        </Link>
+                                        </button>
                                     </li>
                                 </ul>
                             </Dropdown>

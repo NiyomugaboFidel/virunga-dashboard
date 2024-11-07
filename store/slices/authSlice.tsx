@@ -1,21 +1,22 @@
-// src/store/slices/authSlice.ts
-import { api } from '@/libs/Axios';
+import api from '@/libs/Axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Types
-interface User {
+interface UserLogin {
     success: boolean;
     message: string;
     firstName: string;
     email: string;
     profilePic: string;
-    id: string; 
+    id: string;
+    role: string;
     token: string;
-  }
+}
 
 interface AuthState {
-    user: User | null;
+    user: UserLogin | null;
     token: string | null;
     isLoading: boolean;
     error: string | null;
@@ -29,7 +30,7 @@ interface LoginCredentials {
 }
 
 interface LoginResponse {
-    user: User;
+    user: UserLogin;
     token: string;
 }
 
@@ -37,21 +38,33 @@ interface LoginResponse {
 
 // Async Thunk Actions
 export const loginUser = createAsyncThunk<LoginResponse, LoginCredentials, { rejectValue: string }>(
-    '/user/logi',
+    '/user/login',
     async (credentials, { rejectWithValue }) => {
         try {
             const response = await api.post<LoginResponse>('/user/login', credentials);
-            
-            // Store token in localStorage if rememberMe is true
+
+
             if (credentials.rememberMe) {
                 localStorage.setItem('token', response.data.token);
+                Cookies.set('token', response.data.token, {
+                    path: '/', // Cookie path
+                    expires: 1, // Cookie expiration in days
+                    secure: true, // Set to true if using HTTPS
+                    sameSite: 'strict', // Prevents CSRF
+                });
             } else {
                 sessionStorage.setItem('token', response.data.token);
+                Cookies.set('token', response.data.token, {
+                    path: '/', // Cookie path
+                    expires: 1, // Cookie expiration in days
+                    secure: true, // Set to true if using HTTPS
+                    sameSite: 'strict', // Prevents CSRF
+                });
             }
-            
+
             // Set token for subsequent requests
             api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-            
+
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -66,14 +79,15 @@ export const logoutUser = createAsyncThunk(
     'auth/logout',
     async (_, { rejectWithValue }) => {
         try {
-            // Optional: Call logout endpoint if your API requires it
+
             // await api.post('/auth/logout');
-            
+
             localStorage.removeItem('token');
+            Cookies.remove('token');
             sessionStorage.removeItem('token');
             delete api.defaults.headers.common['Authorization'];
-            
-            return null;
+
+            return 'Logout successful';
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 return rejectWithValue(error.response?.data?.message || 'Logout failed');
@@ -84,25 +98,11 @@ export const logoutUser = createAsyncThunk(
 );
 
 
-// export const getCurrentUser = createAsyncThunk<User, void, { rejectValue: string }>(
-//     'auth/getCurrentUser',
-//     async (_, { rejectWithValue }) => {
-//         try {
-//             const response = await api.get<User>('/auth/me');
-//             return response.data;
-//         } catch (error) {
-//             if (axios.isAxiosError(error)) {
-//                 return rejectWithValue(error.response?.data?.message || 'Failed to get user info');
-//             }
-//             return rejectWithValue('An unexpected error occurred');
-//         }
-//     }
-// );
 
 // Initial state
 const initialState: AuthState = {
     user: null,
-    token: typeof window !== 'undefined' 
+    token: typeof window !== 'undefined'
         ? localStorage.getItem('token') || sessionStorage.getItem('token')
         : null,
     isLoading: false,
@@ -133,13 +133,14 @@ const authSlice = createSlice({
                 state.token = action.payload.token;
                 state.isAuthenticated = true;
                 state.error = null;
+
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload || 'Login failed';
                 state.isAuthenticated = false;
             })
-            
+
             // Logout
             .addCase(logoutUser.fulfilled, (state) => {
                 state.user = null;
@@ -147,23 +148,6 @@ const authSlice = createSlice({
                 state.isAuthenticated = false;
                 state.error = null;
             })
-            
-            // // Get Current User
-            // .addCase(getCurrentUser.pending, (state) => {
-            //     state.isLoading = true;
-            //     state.error = null;
-            // })
-            // .addCase(getCurrentUser.fulfilled, (state, action) => {
-            //     state.isLoading = false;
-            //     state.user = action.payload;
-            //     state.isAuthenticated = true;
-            //     state.error = null;
-            // })
-            // .addCase(getCurrentUser.rejected, (state, action) => {
-            //     state.isLoading = false;
-            //     state.error = action.payload || 'Failed to get user info';
-            //     state.isAuthenticated = false;
-            // });
     },
 });
 

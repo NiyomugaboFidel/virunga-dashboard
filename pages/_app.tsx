@@ -12,7 +12,7 @@ import { ni18nConfig } from 'ni18n.config.ts';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import '../styles/tailwind.css';
 import { NextPage } from 'next';
-import AuthProvider from '@/components/contexts/authContext';
+
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
@@ -36,9 +36,9 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
                 <link rel="icon" href="/favicon.png" />
             </Head>
 
-            <AuthProvider>
+         
                 {getLayout(<Component {...pageProps} />)}
-            </AuthProvider>
+            
         </Provider>
     );
 };

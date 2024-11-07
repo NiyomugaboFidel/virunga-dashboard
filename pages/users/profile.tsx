@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
+import { AppDispatch, IRootState} from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import IconPencilPaper from '@/components/Icon/IconPencilPaper';
 import IconCoffee from '@/components/Icon/IconCoffee';
 import IconCalendar from '@/components/Icon/IconCalendar';
@@ -18,13 +18,44 @@ import IconTag from '@/components/Icon/IconTag';
 import IconCreditCard from '@/components/Icon/IconCreditCard';
 import IconClock from '@/components/Icon/IconClock';
 import IconHorizontalDots from '@/components/Icon/IconHorizontalDots';
+import verifyToken from '@/components/common/verifyToken';
+import { User } from '@/types/User';
+import { getCurrentUser } from '@/store/slices/profileSlice';
+
 
 const Profile = () => {
-    const dispatch = useDispatch();
+    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
     });
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const payload = await verifyToken();
+       
+            setLoggedInUser(payload as User);
+          
+        };
+
+        fetchUser();
+    }, []);
+
+    const user = useSelector((state: IRootState) => state.user);
+
+    useEffect(() => {
+     
+        const fetchUser = async () => {
+            if (loggedInUser && loggedInUser.id) {
+                await dispatch(getCurrentUser(loggedInUser.id));
+             }
+        };
+
+        fetchUser();
+    }, [dispatch,loggedInUser , loggedInUser ]);
+     console.log('user:', user);
+    
     return (
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
