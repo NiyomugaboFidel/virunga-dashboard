@@ -35,6 +35,7 @@ import IconMenuMore from '@/components/Icon/Menu/IconMenuMore';
 import {logoutUser } from '@/store/slices/authSlice';
 import verifyToken from '../common/verifyToken';
 import { User } from '@/types/User';
+import Image from 'next/image';
 
 const Header = () => {
     const router = useRouter();
@@ -171,7 +172,7 @@ const Header = () => {
         fetchUser();
     }, []);
 
-    // console.log('Logged in user:', loggedInUser);
+
 
 
     return (
@@ -180,8 +181,8 @@ const Header = () => {
                 <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
                     <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">VRISTO</span>
+                            <Image width={500} height={182} src={'/virunga-logo.svg'} priority className="inline w-8 ltr:-ml-1 rtl:-mr-1" alt="logo" />
+                            <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">VIRUNGA</span>
                         </Link>
                         <button
                             type="button"
@@ -281,7 +282,7 @@ const Header = () => {
                                 offset={[0, 8]}
                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                 btnClassName="block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                                button={flag && <img className="h-5 w-5 rounded-full object-cover" src={`/assets/images/flags/${flag.toUpperCase()}.svg`} alt="flag" />}
+                                button={flag && <Image width={20} height={20} className="h-5 w-5 rounded-full object-cover" src={`/assets/images/flags/${flag.toUpperCase()}.svg`} alt="flag" />}
                             >
                                 <ul className="grid w-[280px] grid-cols-2 gap-2 !px-2 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                                     {themeConfig.languageList.map((item: any) => {
@@ -296,7 +297,7 @@ const Header = () => {
                                                         setLocale(item.code);
                                                     }}
                                                 >
-                                                    <img src={`/assets/images/flags/${item.code.toUpperCase()}.svg`} alt="flag" className="h-5 w-5 rounded-full object-cover" />
+                                                    <Image width={20} height={20} priority src={`/assets/images/flags/${item.code.toUpperCase()}.svg`} alt="flag" className="h-5 w-5 rounded-full object-cover" />
                                                     <span className="ltr:ml-3 rtl:mr-3">{item.name}</span>
                                                 </button>
                                             </li>
@@ -390,7 +391,7 @@ const Header = () => {
                                                         <div className="group flex items-center px-4 py-2">
                                                             <div className="grid place-content-center rounded">
                                                                 <div className="relative h-12 w-12">
-                                                                    <img className="h-12 w-12 rounded-full object-cover" alt="profile" src={`/assets/images/${notification.profile}`} />
+                                                                    <Image width={48} height={48} priority className="h-12 w-12 rounded-full object-cover" alt="profile" src={`/assets/images/${notification.profile}`} />
                                                                     <span className="absolute bottom-0 right-[6px] block h-2 w-2 rounded-full bg-success"></span>
                                                                 </div>
                                                             </div>
@@ -435,25 +436,25 @@ const Header = () => {
                             </Dropdown>
                         </div>
 
-                         {/* logedin user and logout  */}
+                        {/* logedin user and logout  */}
                         <div className="dropdown flex shrink-0">
                             <Dropdown
                                 offset={[0, 8]}
                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                 btnClassName="relative group block"
-                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />}
+                                button={<Image width={36} height={36} priority className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />}
                             >
                                 <ul className="w-[230px] !py-0 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                                     <li>
                                         <div className="flex items-center px-4 py-4">
-                                            <img className="h-10 w-10 rounded-md object-cover" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />
+                                            <Image width={40} height={40} className="h-10 w-10 rounded-md object-cover" src={loggedInUser ? loggedInUser.profilePic : ''} alt="userProfile" />
                                             <div className="truncate ltr:pl-4 rtl:pr-4">
                                                 <h4 className="text-base">
-                                                    {loggedInUser? loggedInUser.firstName : ''}
+                                                    {loggedInUser ? loggedInUser.firstName : ''}
                                                     <span className="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                {loggedInUser? loggedInUser.email : ''}
+                                                    {loggedInUser ? loggedInUser.email : ''}
                                                 </button>
                                             </div>
                                         </div>

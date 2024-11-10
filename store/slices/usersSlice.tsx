@@ -7,23 +7,23 @@ import api from "@/libs/Axios";
 
 
 
-interface UserState {
-    user: User | null;
+interface UsersState {
+    users:  User[] | null;
     loading: boolean;
     error: string | null;
 }
 
-const initialState: UserState = {
-    user: null,
+const initialState: UsersState = {
+    users: [],
     loading: false,
     error: null,
 };
 
-export const getCurrentUser = createAsyncThunk<User, string, { rejectValue: string }>(
+export const getAllUsers = createAsyncThunk<User[], { rejectValue: string }>(
     '/user/:id',
-    async (id, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get<User>(`/user/${id}`);
+            const response = await api.get<User[]>(`/user`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -40,17 +40,17 @@ const userSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getCurrentUser.pending, (state) => {
+            .addCase(getAllUsers.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(getCurrentUser.fulfilled, (state, action) => {
+            .addCase(getAllUsers.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.users = action.payload;
             })
-            .addCase(getCurrentUser.rejected, (state, action) => {
+            .addCase(getAllUsers.rejected, (state) => {
                 state.loading = false;
-                state.error = action.payload || "Failed to load user data";
+                state.error = "Failed to load user data";
             });
     },
 });

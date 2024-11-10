@@ -21,6 +21,7 @@ import IconHorizontalDots from '@/components/Icon/IconHorizontalDots';
 import verifyToken from '@/components/common/verifyToken';
 import { User } from '@/types/User';
 import { getCurrentUser } from '@/store/slices/profileSlice';
+import Image from 'next/image';
 
 
 const Profile = () => {
@@ -42,7 +43,7 @@ const Profile = () => {
         fetchUser();
     }, []);
 
-    const user = useSelector((state: IRootState) => state.user);
+    const {user, loading, error} = useSelector((state: IRootState) => state.user);
 
     useEffect(() => {
      
@@ -54,23 +55,26 @@ const Profile = () => {
 
         fetchUser();
     }, [dispatch,loggedInUser , loggedInUser ]);
-     console.log('user:', user);
+    
+     console.log('user:', user?.firstName);
     
     return (
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
-                    <Link href="#" className="text-primary hover:underline">
+                    <Link href="/users/profile" className="text-primary hover:underline">
                         Users
                     </Link>
                 </li>
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Profile</span>
+                <Link href="/users/profile" className=" hover:underline">
+                        Profile
+                    </Link>
                 </li>
             </ul>
-            <div className="pt-5">
-                <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-3 xl:grid-cols-4">
-                    <div className="panel">
+            <div className="pt-5 ">
+                <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">
+                    <div className="panel w-full">
                         <div className="mb-5 flex items-center justify-between">
                             <h5 className="text-lg font-semibold dark:text-white-light">Profile</h5>
                             <Link href="/users/user-account-settings" className="btn btn-primary rounded-full p-2 ltr:ml-auto rtl:mr-auto">
@@ -79,8 +83,9 @@ const Profile = () => {
                         </div>
                         <div className="mb-5">
                             <div className="flex flex-col items-center justify-center">
-                                <img src="/assets/images/profile-34.jpeg" alt="img" className="mb-5 h-24 w-24 rounded-full  object-cover" />
-                                <p className="text-xl font-semibold text-primary">Jimmy Turner</p>
+                                <Image width={96} height={96} priority   src={user?.profilePic as string} alt={user?.firstName as string} className="mb-5 h-24 w-24 rounded-full  object-cover" />
+                                <p className="text-xl font-semibold text-primary">{user?.firstName}  {user?.lastName} </p>
+                               
                             </div>
                             <ul className="m-auto mt-5 flex max-w-[160px] flex-col space-y-4 font-semibold text-white-dark">
                                 <li className="flex items-center gap-2">
@@ -93,18 +98,18 @@ const Profile = () => {
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <IconMapPin className="shrink-0" />
-                                    New York, USA
+                                    {user?.userAddress.city}
                                 </li>
                                 <li>
                                     <button className="flex items-center gap-2">
                                         <IconMail className="w-5 h-5 shrink-0" />
-                                        <span className="truncate text-primary">jimmy@gmail.com</span>
+                                        <span className="truncate text-primary overflow-hidden w-[160px]">{user?.email}</span>
                                     </button>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <IconPhone />
                                     <span className="whitespace-nowrap" dir="ltr">
-                                        +1 (530) 555-12121
+                                        {user?.phoneN}
                                     </span>
                                 </li>
                             </ul>
@@ -127,7 +132,7 @@ const Profile = () => {
                             </ul>
                         </div>
                     </div>
-                    <div className="panel lg:col-span-2 xl:col-span-3">
+                    {/* <div className="panel lg:col-span-2 xl:col-span-3">
                         <div className="mb-5">
                             <h5 className="text-lg font-semibold dark:text-white-light">Task</h5>
                         </div>
@@ -218,9 +223,9 @@ const Profile = () => {
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                {/* <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className="panel">
                         <div className="mb-5">
                             <h5 className="text-lg font-semibold dark:text-white-light">Summary</h5>
@@ -429,7 +434,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

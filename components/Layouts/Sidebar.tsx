@@ -32,6 +32,7 @@ import IconMenuUsers from '@/components/Icon/Menu/IconMenuUsers';
 import IconMenuPages from '@/components/Icon/Menu/IconMenuPages';
 import IconMenuAuthentication from '@/components/Icon/Menu/IconMenuAuthentication';
 import IconMenuDocumentation from '@/components/Icon/Menu/IconMenuDocumentation';
+import Image from 'next/image';
 
 const Sidebar = () => {
     const router = useRouter();
@@ -90,8 +91,8 @@ const Sidebar = () => {
                 <div className="h-full bg-white dark:bg-black">
                     <div className="flex items-center justify-between px-4 py-3">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <img className="ml-[5px] w-8 flex-none" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">{t('VRISTO')}</span>
+                        <Image width={500} height={182} src={'/virunga-logo.svg'} priority className="inline w-8 ltr:-ml-1 rtl:-mr-1" alt="logo" />
+                        <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">VIRUNGA</span>
                         </Link>
 
                         <button
