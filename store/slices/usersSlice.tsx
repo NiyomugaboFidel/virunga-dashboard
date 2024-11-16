@@ -19,23 +19,23 @@ const initialState: UsersState = {
     error: null,
 };
 
-export const getAllUsers = createAsyncThunk<User[], { rejectValue: string }>(
-    '/user/:id',
+export const getAllUsers = createAsyncThunk<User[], void>(
+    '/user/all-users',
     async (_, { rejectWithValue }) => {
-        try {
-            const response = await api.get<User[]>(`/user`);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                return rejectWithValue(error.response?.data?.message || 'Failed to get user info');
-            }
-            return rejectWithValue('An unexpected error occurred');
+      try {
+        const response = await api.get<User[]>(`/user/all-users`);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          return rejectWithValue(error.response?.data?.message || 'Failed to get user info');
         }
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
-);
+  );
 
 const userSlice = createSlice({
-    name: "user",
+    name: "all-user",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
